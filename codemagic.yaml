@@ -1,0 +1,85 @@
+workflows:
+  android-workflow:
+    name: Seanzy — Android (Google Play + AppGallery)
+    max_build_duration: 30
+    instance_type: linux_x2
+    environment:
+      node: 20
+      java: 17
+      groups:
+        # Codemagic'te "android_signing" adında bir ortam grubu oluşturup imzalama
+        # anahtarınızı (keystore + şifreler) buraya bağlayın (Code signing identities menüsü).
+        - android_signing
+      vars:
+        PACKAGE_NAME: "com.seanzy.app"
+    scripts:
+      - name: Bağımlılıkları kur
+        script: npm ci
+      - name: Web + native build
+        script: |
+          npm run build:capacitor
+          npx cap sync android
+      - name: Android imzalı .aab derle
+        script: |
+          cd android
+          chmod +x gradlew
+          ./gradlew bundleRelease
+    artifacts:
+      - android/app/build/outputs/**/*.aab
+      - android/app/build/outputs/**/*.apk
+    publishing:
+      email:
+        recipients:
+          - halilbulbul93@gmail.com
+        notify:
+          success: true
+          failure: true
+
+  ios-workflow:
+    name: Seanzy — iOS (App Store)
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      node: 20
+      xcode: latest
+      cocoapods: default
+      groups:
+        # Codemagic'te "ios_signing" grubunu oluşturup Apple Developer hesabınızı
+        # (App Store Connect API key) ve imzalama sertifikasını buraya bağlayın.
+        - ios_signing
+      vars:
+        BUNDLE_ID: "com.seanzy.app"
+        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
+        XCODE_SCHEME: "App"
+    scripts:
+      - name: Bağımlılıkları kur
+        script: npm ci
+      - name: Web + native build
+        script: |
+          npm run build:capacitor
+          npx cap sync ios
+      - name: CocoaPods kur
+        script: |
+          cd ios/App
+          pod install
+      - name: Kod imzalama ayarlarını hazırla
+        script: |
+          keychain initialize
+          app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
+          keychain add-certificates
+          xcode-project use-profiles
+      - name: Xcode ile .ipa derle
+        script: |
+          xcode-project build-ipa \
+            --workspace "$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      email:
+        recipients:
+          - halilbulbul93@gmail.com
+        notify:
+          success: true
+          failure: true

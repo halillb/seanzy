@@ -1,0 +1,40 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9A7A45"/>
+      <stop offset="55%" stop-color="#C9A96E"/>
+      <stop offset="100%" stop-color="#EDD9A3"/>
+    </linearGradient>
+    <linearGradient id="gbg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#202024"/>
+      <stop offset="100%" stop-color="#0C0C0D"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect width="512" height="512" rx="108" fill="url(#gbg)"/>
+
+  <!-- Subtle radial glow center -->
+  <circle cx="256" cy="256" r="220" fill="rgba(201,169,110,0.05)"/>
+
+  <!-- ══ Seanzy mark: abstract flowing "S" ribbon (movement / seans akışı) ══ -->
+  <path d="M 340 138
+           C 340 106, 308 88, 264 88
+           C 208 88, 172 118, 172 158
+           C 172 202, 210 220, 256 236
+           C 310 254, 348 276, 348 322
+           C 348 366, 308 396, 250 396
+           C 200 396, 166 376, 166 340"
+        fill="none" stroke="url(#gg)" stroke-width="46" stroke-linecap="round"/>
+
+  <!-- Sparkle accents (kept from brand language) -->
+  <g transform="translate(392,120)" opacity="0.8" fill="url(#gg)">
+    <polygon points="0,-13 3.5,-3.5 13,0 3.5,3.5 0,13 -3.5,3.5 -13,0 -3.5,-3.5"/>
+  </g>
+  <g transform="translate(120,392)" opacity="0.4" fill="#EDD9A3">
+    <polygon points="0,-7 2,-2 7,0 2,2 0,7 -2,2 -7,0 -2,-2"/>
+  </g>
+
+  <!-- Bottom accent bar -->
+  <rect x="176" y="440" width="160" height="3" rx="1.5" fill="url(#gg)" opacity="0.4"/>
+</svg>
