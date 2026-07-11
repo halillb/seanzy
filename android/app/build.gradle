@@ -24,7 +24,8 @@ android {
                 storeFile file(ksPath)
                 storePassword System.getenv("CM_KEYSTORE_PASSWORD")
                 keyAlias System.getenv("CM_KEY_ALIAS")
-                keyPassword System.getenv("CM_KEY_PASSWORD")
+                // PKCS12 keystore'larda anahtar şifresi mağaza şifresiyle aynı olmak zorunda (keytool bunu zorunlu kılıyor)
+                keyPassword System.getenv("CM_KEYSTORE_PASSWORD")
                 storeType "PKCS12"
             }
         }
