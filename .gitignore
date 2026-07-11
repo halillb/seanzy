@@ -13,3 +13,4 @@ ios/App/build/
 
 .vscode/
 .idea/
+keystore-output/

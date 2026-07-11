@@ -7,8 +7,9 @@ workflows:
       node: 20
       java: 17
       groups:
-        # Codemagic'te "android_signing" adında bir ortam grubu oluşturup imzalama
-        # anahtarınızı (keystore + şifreler) buraya bağlayın (Code signing identities menüsü).
+        # Codemagic'te "android_signing" adında bir ortam değişkeni grubu oluşturup
+        # CM_KEYSTORE (base64), CM_KEYSTORE_PASSWORD, CM_KEY_ALIAS, CM_KEY_PASSWORD
+        # değişkenlerini buraya ekleyin (Environment variables sekmesi, hepsi "Secure").
         - android_signing
       vars:
         PACKAGE_NAME: "com.seanzy.app"
@@ -19,6 +20,10 @@ workflows:
         script: |
           npm run build:capacitor
           npx cap sync android
+      - name: Keystore'u çöz
+        script: |
+          echo $CM_KEYSTORE | base64 -d > /tmp/seanzy-release.p12
+          echo "CM_KEYSTORE_PATH=/tmp/seanzy-release.p12" >> $CM_ENV
       - name: Android imzalı .aab derle
         script: |
           cd android
