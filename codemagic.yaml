@@ -19,9 +19,14 @@ workflows:
         script: |
           npm run build:capacitor
           npx cap sync android
-      - name: Keystore'u çöz
+      - name: Keystore'u keytool ile üret (TEK SEFERLİK - node-forge uyumsuzluğu için)
         script: |
-          echo $CM_KEYSTORE | base64 -d > /tmp/seanzy-release.p12
+          rm -f /tmp/seanzy-release.p12
+          keytool -genkeypair -v -keystore /tmp/seanzy-release.p12 -storetype PKCS12 \
+            -alias "$CM_KEY_ALIAS" -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass "$CM_KEYSTORE_PASSWORD" -keypass "$CM_KEY_PASSWORD" \
+            -dname "CN=Seanzy, OU=Seanzy, O=Seanzy, L=Istanbul, S=Istanbul, C=TR"
+          cp /tmp/seanzy-release.p12 seanzy-release-NEW.p12
           echo "CM_KEYSTORE_PATH=/tmp/seanzy-release.p12" >> $CM_ENV
       - name: Android imzalı .aab derle
         script: |
@@ -31,6 +36,7 @@ workflows:
     artifacts:
       - android/app/build/outputs/**/*.aab
       - android/app/build/outputs/**/*.apk
+      - seanzy-release-NEW.p12
     publishing:
       email:
         recipients:
