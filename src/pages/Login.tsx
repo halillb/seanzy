@@ -169,7 +169,7 @@ export default function Login() {
 
   const logo = (
     <div style={{ textAlign: 'center', marginBottom: 34 }}>
-      <div className="sb-mark" style={{ width: 60, height: 60, borderRadius: 17, fontSize: 28, margin: '0 auto 20px' }}>S</div>
+      <img src="/estetix/icon-192.png" alt="Seanzy" style={{ width: 72, height: 72, borderRadius: 18, margin: '0 auto 20px', display: 'block', boxShadow: '0 8px 24px rgba(201,169,110,.35)' }} />
       <div className="serif" style={{ fontWeight: 400, fontSize: 40, letterSpacing: '.14em' }}>
         Sean<em style={{ color: 'var(--gold)' }}>zy</em>
       </div>

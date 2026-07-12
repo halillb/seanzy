@@ -140,8 +140,8 @@ export default function Fiyatlar() {
       {/* ── Topbar ── */}
       <header style={{ position: 'sticky', top: 0, zIndex: 50, background: 'color-mix(in srgb, var(--bg) 85%, transparent)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--border)', padding: '0 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div className="sb-mark" style={{ width: 34, height: 34, borderRadius: 9, fontSize: 16 }}>E</div>
-          <span className="serif" style={{ fontSize: 22, fontWeight: 400, letterSpacing: '.1em' }}>Estet<em style={{ color: 'var(--gold)' }}>iX</em></span>
+          <img src="/estetix/icon-192.png" alt="Seanzy" style={{ width: 34, height: 34, borderRadius: 9 }} />
+          <span className="serif" style={{ fontSize: 22, fontWeight: 400, letterSpacing: '.1em' }}>Sean<em style={{ color: 'var(--gold)' }}>zy</em></span>
         </div>
         {token ? (
           <button className="btn btn-gold" onClick={() => nav(panelHedef)} style={{ padding: '9px 20px', fontSize: 13 }}>

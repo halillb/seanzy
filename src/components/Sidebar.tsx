@@ -112,7 +112,7 @@ export default function Sidebar({ mobAcik, onKapat }: Props) {
   return (
     <aside className={'sb' + (mobAcik ? ' mob-acik' : '')}>
       <div className="sb-logo">
-        <div className="sb-mark">S</div>
+        <img src="/estetix/icon-192.png" alt="Seanzy" className="sb-mark" style={{ objectFit: 'cover' }} />
         <div>
           <div className="sb-wm">Sean<em>zy</em></div>
           <div className="sb-wsub">{rolAd}</div>
