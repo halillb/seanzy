@@ -136,7 +136,7 @@ export default function Fiyatlar() {
   const panelHedef = rol === 'superadmin' ? '/sa-genel' : rol === 'personel' ? '/programim' : rol === 'musteri' ? '/randevularim' : '/genel-bakis'
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg)', color: 'var(--text)' }}>
+    <div style={{ minHeight: '100dvh', background: 'var(--bg)', color: 'var(--text)' }}>
       {/* ── Topbar ── */}
       <header style={{ position: 'sticky', top: 0, zIndex: 50, background: 'color-mix(in srgb, var(--bg) 85%, transparent)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--border)', padding: '0 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>

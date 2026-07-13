@@ -194,7 +194,7 @@ export default function PaketEngeli({ ozellik }: Props) {
   const benefits = PAKET_BENFITS[hedefPaket]
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '32px 24px', minHeight: '70vh' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '32px 24px', minHeight: '70dvh' }}>
       <div style={{ maxWidth: 680, width: '100%' }}>
 
         {/* Geri dön */}

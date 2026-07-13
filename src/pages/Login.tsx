@@ -202,7 +202,7 @@ export default function Login() {
   )
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 22px', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 22px', position: 'relative', overflow: 'hidden' }}>
       {ust}
       <div style={{ position: 'absolute', width: 420, height: 420, borderRadius: '50%', filter: 'blur(80px)', background: 'rgba(201,169,110,.13)', top: -140, left: '50%', transform: 'translateX(-50%)', pointerEvents: 'none' }} />
 

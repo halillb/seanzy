@@ -389,7 +389,7 @@ select.input{appearance:none;cursor:pointer}
 }
 
 /* ── MOBİL SİDEBAR ── */
-.sb-mob{display:none;align-items:center;justify-content:space-between;gap:8px;padding:0 14px;height:56px;background:var(--top-bg);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:31;flex-shrink:0}
+.sb-mob{display:none;align-items:center;justify-content:space-between;gap:8px;padding:env(safe-area-inset-top,0px) 14px 0;height:56px;box-sizing:content-box;background:var(--top-bg);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:31;flex-shrink:0}
 .sb-mob-logo{font-family:'Cormorant Garamond',serif;font-size:23px;letter-spacing:.08em;color:var(--text);flex-shrink:0}
 .sb-mob-logo em{font-style:italic;color:var(--gold-text)}
 .sb-mob-selam{flex:1;min-width:0;font-size:11px;color:var(--gold-text);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -410,7 +410,7 @@ select.input{appearance:none;cursor:pointer}
 .scroll-top-btn{display:none}
 @media(max-width:768px){
   .scroll-top-btn{
-    display:flex;align-items:center;justify-content:center;position:fixed;right:14px;bottom:80px;z-index:33;
+    display:flex;align-items:center;justify-content:center;position:fixed;right:14px;bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:33;
     width:40px;height:40px;border-radius:50%;background:var(--surface2);border:1px solid var(--border2);
     color:var(--gold-text);box-shadow:var(--shadow);cursor:pointer;animation:fadeIn .2s ease;
   }
@@ -418,7 +418,7 @@ select.input{appearance:none;cursor:pointer}
 }
 
 /* ── ALT NAVİGASYON (mobile) ── */
-.bot-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:35;height:64px;background:var(--top-bg);backdrop-filter:blur(20px);border-top:1px solid var(--border);flex-direction:row;align-items:center;justify-content:space-around;padding:0 4px;padding-bottom:env(safe-area-inset-bottom,0px)}
+.bot-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:35;height:64px;box-sizing:content-box;background:var(--top-bg);backdrop-filter:blur(20px);border-top:1px solid var(--border);flex-direction:row;align-items:center;justify-content:space-around;padding:0 4px;padding-bottom:env(safe-area-inset-bottom,0px)}
 .bot-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;border-radius:12px;background:none;border:none;cursor:pointer;color:var(--muted);font-family:inherit;font-size:9.5px;font-weight:500;letter-spacing:.02em;transition:color .15s,background .15s;flex:1;min-width:0;max-width:64px}
 .bot-nav-item svg{width:22px;height:22px;stroke:currentColor;transition:stroke .15s}
 .bot-nav-item.ak{color:var(--gold-text)}
@@ -431,7 +431,7 @@ select.input{appearance:none;cursor:pointer}
 .bot-fab-lbl{font-size:9px;color:var(--muted);font-weight:500;white-space:nowrap}
 /* Speed dial overlay */
 .fab-overlay{position:fixed;inset:0;z-index:34;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);animation:ovIn .18s ease}
-.fab-dial{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:36;display:flex;flex-direction:column;gap:10px;align-items:center;animation:slideUp .22s var(--ease)}
+.fab-dial{position:fixed;bottom:calc(80px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);z-index:36;display:flex;flex-direction:column;gap:10px;align-items:center;animation:slideUp .22s var(--ease)}
 .fab-item{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:12px 18px;cursor:pointer;min-width:220px;box-shadow:var(--shadow);transition:background .12s,transform .12s}
 .fab-item:active{transform:scale(.97);background:var(--surface2)}
 .fab-item-ic{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -452,11 +452,11 @@ select.input{appearance:none;cursor:pointer}
   .top-h{font-size:15px}
   .top-actions{gap:8px;margin-left:auto}
   .top-search{display:none}
-  .page{padding:14px 12px 80px;gap:14px}
+  .page{padding:14px 12px calc(80px + env(safe-area-inset-bottom,0px));gap:14px}
   .cards-4{grid-template-columns:repeat(2,1fr)}
   .panel{padding:14px}
-  .modal-ov{align-items:flex-end;padding:0}
-  .modal{border-radius:18px 18px 0 0;max-height:92dvh;overflow-y:auto}
+  .modal-ov{align-items:center;padding:16px}
+  .modal{border-radius:18px;max-height:88dvh;overflow-y:auto}
   .bell-pop{right:-8px}
 }
 @media(max-width:480px){
