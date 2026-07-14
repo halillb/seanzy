@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { ChevronDown, ChevronUp, Lock, ArrowRight, BookOpen } from 'lucide-react'
+import { ChevronDown, ChevronUp, Lock, ArrowRight, BookOpen, MessageCircle } from 'lucide-react'
 import Topbar from '../components/Topbar'
 import { useAuth } from '../store/auth'
 import { OZELLIKLER, PAKET_RENK, paketErisi, type SaPaket } from '../lib/ozellikler'
@@ -82,11 +82,19 @@ export default function KullanimRehberi() {
                                 <li key={i} style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.6 }}>{a}</li>
                               ))}
                             </ol>
-                            {rehber.yol && acikMi && (
-                              <button className="btn btn-sm btn-ghost" style={{ marginTop: 10, gap: 6 }} onClick={() => nav(rehber.yol!)}>
-                                Sayfaya Git <ArrowRight size={13} />
-                              </button>
-                            )}
+                            <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+                              {rehber.yol && acikMi && (
+                                <button className="btn btn-sm btn-ghost" style={{ gap: 6 }} onClick={() => nav(rehber.yol!)}>
+                                  Sayfaya Git <ArrowRight size={13} />
+                                </button>
+                              )}
+                              {!superMod && (
+                                <button className="btn btn-sm btn-ghost" style={{ gap: 6 }}
+                                  onClick={() => nav('/destek', { state: { konu: `${tanim.ad} hakkında yardım`, ozellik_kodu: key } })}>
+                                  <MessageCircle size={13} /> Destek Al
+                                </button>
+                              )}
+                            </div>
                           </>
                         ) : (
                           <div style={{ fontSize: 13, color: 'var(--muted)' }}>Bu özellik için rehber içeriği henüz eklenmedi.</div>

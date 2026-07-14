@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Calendar, ClipboardList, Users, Package, UserCheck,
   Sparkles, Coins, BarChart3, Gift, Hourglass, Settings, LogOut, Megaphone,
   TrendingUp, Building2, Download, Lock, ShoppingBag, Star, Clock4,
-  Receipt, Trophy, MessageSquare, Plug, X, Bell, BookOpen, type LucideIcon,
+  Receipt, Trophy, MessageSquare, Plug, X, Bell, BookOpen, MessageCircle, type LucideIcon,
 } from 'lucide-react'
 import { useAuth } from '../store/auth'
 import { useT } from '../lib/ceviri'
@@ -55,6 +55,7 @@ const NAV: Record<string, NavGroup[]> = {
       { to: '/disa-aktar',         label: 'nav.disaAktar',       icon: Download,    ozellik: 'disa_aktar'      },
       { to: '/paketlerim',         label: 'nav.paketlerim',      icon: Package },
       { to: '/kullanim-rehberi',   label: 'nav.kullanimRehberi', icon: BookOpen },
+      { to: '/destek',             label: 'nav.destek',          icon: MessageCircle },
       { to: '/ayarlar',            label: 'nav.ayarlar',         icon: Settings },
     ]},
   ],
@@ -63,6 +64,7 @@ const NAV: Record<string, NavGroup[]> = {
       { to: '/programim',         label: 'nav.programim',       icon: Calendar },
       { to: '/randevular',        label: 'nav.randevularim',    icon: ClipboardList },
       { to: '/bildirim-ayarlari', label: 'nav.bildirimAyarlari', icon: Bell },
+      { to: '/destek',            label: 'nav.destek',          icon: MessageCircle },
     ]},
   ],
   superadmin: [
@@ -74,6 +76,7 @@ const NAV: Record<string, NavGroup[]> = {
       { to: '/sa-entegrasyon-talepleri', label: 'nav.entegrasyonTalepleri', icon: Clock4 },
       { to: '/sa-bildirimler',    label: 'nav.bildirimler',   icon: Bell },
       { to: '/kullanim-rehberi',  label: 'nav.kullanimRehberi', icon: BookOpen },
+      { to: '/sa-destek',         label: 'nav.destek',         icon: MessageCircle },
     ]},
     { g: 'grp.hesabim', items: [
       { to: '/sa-profil',   label: 'nav.ayarlar',    icon: Settings },
@@ -83,6 +86,7 @@ const NAV: Record<string, NavGroup[]> = {
     { g: 'grp.hesabim', items: [
       { to: '/randevularim', label: 'nav.randevularim', icon: ClipboardList },
       { to: '/randevu-al',   label: 'nav.randevuAl',    icon: Calendar },
+      { to: '/destek',       label: 'nav.destek',       icon: MessageCircle },
     ]},
   ],
 }

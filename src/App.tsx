@@ -43,6 +43,8 @@ import Paketlerim from './pages/Paketlerim'
 import Parapuan from './pages/Parapuan'
 import Anket from './pages/Anket'
 import KullanimRehberi from './pages/KullanimRehberi'
+import Destek from './pages/Destek'
+import SuperAdminDestek from './pages/SuperAdminDestek'
 import { ConfirmHost } from './lib/confirm'
 import { QuickActionHost } from './lib/quickAction'
 
@@ -131,12 +133,14 @@ function Routed() {
             <Route path="/sa-entegrasyon-talepleri" element={<SuperAdminEntegrasyonTalepleri />} />
             <Route path="/sa-bildirimler"     element={<Bildirimler />} />
             <Route path="/kullanim-rehberi"   element={<KullanimRehberi />} />
+            <Route path="/sa-destek"          element={<SuperAdminDestek />} />
           </>
         ) : musteriMod ? (
           musteriPaneliAcik ? (
             <>
               <Route path="/randevularim" element={<MusteriRandevularim />} />
               <Route path="/randevu-al" element={<MusteriRandevuAl />} />
+              <Route path="/destek" element={<Destek />} />
             </>
           ) : (
             <Route path="/randevularim" element={<PaketYok />} />
@@ -149,6 +153,7 @@ function Routed() {
               <Route path="/musteriler" element={<Musteriler />} />
               <Route path="/urun-stok" element={<UrunStok />} />
               <Route path="/bildirim-ayarlari" element={<BildirimAyarlari />} />
+              <Route path="/destek" element={<Destek />} />
             </>
           ) : (
             <Route path="/programim" element={<PaketYok />} />
@@ -176,6 +181,7 @@ function Routed() {
             <Route path="/disa-aktar" element={<DisaAktar />} />
             <Route path="/paketlerim" element={<Paketlerim />} />
             <Route path="/kullanim-rehberi" element={<KullanimRehberi />} />
+            <Route path="/destek" element={<Destek />} />
             <Route path="/parapuan" element={<Parapuan />} />
             <Route path="/anket" element={<Anket />} />
             <Route path="/ayarlar" element={<Ayarlar />} />
