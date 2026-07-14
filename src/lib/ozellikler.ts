@@ -81,6 +81,8 @@ export const OZELLIKLER: Record<string, OzellikTanim> = {
   cok_sube:        { ad: 'Çoklu Şube',          aciklama: 'Birden fazla şube ve personel yönetimi',  min: 'enterprise', grup: 'Sistem'    },
   dijital_imza:    { ad: 'Dijital Onam',         aciklama: 'Müşteri onam formu ve dijital imza',      min: 'enterprise', grup: 'Sistem'    },
   gelismis_rapor:  { ad: 'Gelişmiş Raporlar',   aciklama: 'BI analitik ve özel rapor oluşturucu',    min: 'enterprise', grup: 'Raporlar'  },
+  oncelikli_destek: { ad: 'Öncelikli Destek',   aciklama: 'Öncelikli müşteri destek hattı ve daha hızlı yanıt süresi', min: 'enterprise', grup: 'Sistem' },
+  ozel_entegrasyon: { ad: 'Özel Entegrasyon',   aciklama: 'İsteğe özel API/entegrasyon ve kurulum desteği', min: 'enterprise', grup: 'Sistem' },
 }
 
 // Route → gereken özellik eşlemesi
