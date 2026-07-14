@@ -59,13 +59,12 @@ export default function Fiyatlar() {
 
   let oncekiGosterilen: string[] = []
   const PAKETLER = paketler.map((p, i) => {
-    // Otomatik liste: OZELLIKLER'in tanımlı (kademeli) sırasıyla — her üst paket bir alttakinin
-    // aynı sırasını korur, üstüne yeni açılanları ekler. Elle eklenmiş ekstra maddeler varsa sonuna eklenir.
-    const otomatik = Object.entries(OZELLIKLER)
+    // Liste tamamen Özellik Haritası'ndan (OZELLIKLER tanımlı sırasıyla) türetilir — her üst paket
+    // bir alttakinin tüm maddelerini aynı sırayla korur, üstüne yeni açılanları ekler. Eski/elle
+    // eklenmiş kalıntı maddeler (bu otomatik sistemden önceki veriler) kasıtlı olarak sayılmaz.
+    const dahilOlanlar = Object.entries(OZELLIKLER)
       .filter(([key]) => erisimVar(p.kod, harita?.[key] ?? OZELLIKLER[key].min))
       .map(([, t]) => t.ad)
-    const ekstra = p.ozellikler.filter((o) => o.aktif && !otomatik.includes(o.ad)).map((o) => o.ad)
-    const dahilOlanlar = [...otomatik, ...ekstra]
     // Kart özeti: ilk pakette ilk 5; sonraki her pakette bir öncekinin gösterdiklerini
     // koru + en az 3 yeni özelliği ekle (yükseltmenin gerçek farkını göstermek için)
     const yeniler = dahilOlanlar.filter((f) => !oncekiGosterilen.includes(f))
