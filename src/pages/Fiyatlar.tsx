@@ -57,6 +57,7 @@ export default function Fiyatlar() {
   const erisimVar = (paketKod: string, gerekenMin: string) => siraOf(paketKod) >= siraOf(gerekenMin)
   const populerKod = paketler.find((p) => p.kod === 'pro')?.kod ?? paketler[Math.floor((paketler.length - 1) / 2)]?.kod
 
+  let oncekiGosterilen: string[] = []
   const PAKETLER = paketler.map((p, i) => {
     // Otomatik liste: OZELLIKLER'in tanımlı (kademeli) sırasıyla — her üst paket bir alttakinin
     // aynı sırasını korur, üstüne yeni açılanları ekler. Elle eklenmiş ekstra maddeler varsa sonuna eklenir.
@@ -65,6 +66,11 @@ export default function Fiyatlar() {
       .map(([, t]) => t.ad)
     const ekstra = p.ozellikler.filter((o) => o.aktif && !otomatik.includes(o.ad)).map((o) => o.ad)
     const dahilOlanlar = [...otomatik, ...ekstra]
+    // Kart özeti: ilk pakette ilk 5; sonraki her pakette bir öncekinin gösterdiklerini
+    // koru + en az 3 yeni özelliği ekle (yükseltmenin gerçek farkını göstermek için)
+    const yeniler = dahilOlanlar.filter((f) => !oncekiGosterilen.includes(f))
+    const gosterilen = i === 0 ? dahilOlanlar.slice(0, 5) : [...oncekiGosterilen, ...yeniler.slice(0, 3)]
+    oncekiGosterilen = gosterilen
     return {
       id: p.kod,
       ad: p.ad,
@@ -73,6 +79,7 @@ export default function Fiyatlar() {
       icon: IKONLAR[i % IKONLAR.length],
       popular: p.kod === populerKod,
       dahilOlanlar,
+      gosterilen,
     }
   })
 
@@ -154,14 +161,14 @@ export default function Fiyatlar() {
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
                 <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text2)', textTransform: 'uppercase', letterSpacing: '.08em' }}>Öne Çıkanlar</div>
-                {p.dahilOlanlar.slice(0, 5).map((f, i) => (
+                {p.gosterilen.map((f, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 13.5 }}>
                     <Check size={15} style={{ color: p.renk === 'var(--gold)' ? 'var(--gold)' : p.renk, flexShrink: 0 }} />
                     <span style={{ color: 'var(--text2)' }}>{f}</span>
                   </div>
                 ))}
-                {p.dahilOlanlar.length > 5 && (
-                  <div style={{ fontSize: 12.5, color: 'var(--muted)', marginTop: 2 }}>+{p.dahilOlanlar.length - 5} özellik daha — aşağıdaki tabloda</div>
+                {p.dahilOlanlar.length > p.gosterilen.length && (
+                  <div style={{ fontSize: 12.5, color: 'var(--muted)', marginTop: 2 }}>+{p.dahilOlanlar.length - p.gosterilen.length} özellik daha — aşağıdaki tabloda</div>
                 )}
               </div>
 
