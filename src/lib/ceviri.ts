@@ -81,6 +81,7 @@ export const SOZLUK: Record<string, Ceviri> = {
   'nav.bildirimAyarlari': { tr: 'Bildirimler',      en: 'Notifications',      ar: 'الإشعارات'          },
   'nav.disaAktar':    { tr: 'Dışa Aktar',       en: 'Export',             ar: 'تصدير'             },
   'nav.paketlerim':   { tr: 'Paketim',          en: 'My Package',         ar: 'باقتي'              },
+  'nav.kullanimRehberi': { tr: 'Kullanım Kılavuzu', en: 'Usage Guide',    ar: 'دليل الاستخدام'     },
   'nav.parapuan':     { tr: 'Parapuan',         en: 'Loyalty Points',     ar: 'نقاط الولاء'        },
   'nav.anket':        { tr: 'Memnuniyet',       en: 'Surveys',            ar: 'الاستطلاعات'        },
   'nav.beklemeListe': { tr: 'Bekleme Listesi',  en: 'Waitlist',           ar: 'قائمة الانتظار'    },

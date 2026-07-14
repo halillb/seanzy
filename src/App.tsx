@@ -42,6 +42,7 @@ import SalonSkoru from './pages/SalonSkoru'
 import Paketlerim from './pages/Paketlerim'
 import Parapuan from './pages/Parapuan'
 import Anket from './pages/Anket'
+import KullanimRehberi from './pages/KullanimRehberi'
 import { ConfirmHost } from './lib/confirm'
 import { QuickActionHost } from './lib/quickAction'
 
@@ -129,6 +130,7 @@ function Routed() {
             <Route path="/sa-entegrasyonlar"  element={<SuperAdminEntegrasyonlar />} />
             <Route path="/sa-entegrasyon-talepleri" element={<SuperAdminEntegrasyonTalepleri />} />
             <Route path="/sa-bildirimler"     element={<Bildirimler />} />
+            <Route path="/kullanim-rehberi"   element={<KullanimRehberi />} />
           </>
         ) : musteriMod ? (
           musteriPaneliAcik ? (
@@ -173,6 +175,7 @@ function Routed() {
             <Route path="/bildirim-ayarlari" element={<BildirimAyarlari />} />
             <Route path="/disa-aktar" element={<DisaAktar />} />
             <Route path="/paketlerim" element={<Paketlerim />} />
+            <Route path="/kullanim-rehberi" element={<KullanimRehberi />} />
             <Route path="/parapuan" element={<Parapuan />} />
             <Route path="/anket" element={<Anket />} />
             <Route path="/ayarlar" element={<Ayarlar />} />

@@ -182,7 +182,7 @@ export default function Fiyatlar() {
               )}
               {p.fiyat_aylik === 0 && (
                 <div style={{ position: 'absolute', top: -13, left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(135deg,#3FA76A,#7FD9A0)', color: '#06210F', fontSize: 11.5, fontWeight: 700, letterSpacing: '.08em', padding: '5px 18px', borderRadius: 20, whiteSpace: 'nowrap', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <InfinityIcon size={13} /> Sonsuza Kadar Ücretsiz
+                  <InfinityIcon size={13} /> Her Zaman Ücretsiz
                 </div>
               )}
 
