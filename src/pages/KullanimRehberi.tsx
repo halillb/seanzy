@@ -73,6 +73,10 @@ export default function KullanimRehberi() {
                       <div style={{ padding: '4px 14px 14px 37px', background: 'var(--surface)' }}>
                         {rehber ? (
                           <>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
+                              <span style={{ fontSize: 10.5, fontWeight: 600, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.06em' }}>Kim yapar:</span>
+                              <span style={{ fontSize: 11.5, color: 'var(--gold-text)', background: 'rgba(201,169,110,.12)', borderRadius: 20, padding: '2px 9px', fontWeight: 500 }}>{rehber.kim}</span>
+                            </div>
                             <ol style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 6 }}>
                               {rehber.adimlar.map((a, i) => (
                                 <li key={i} style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.6 }}>{a}</li>
