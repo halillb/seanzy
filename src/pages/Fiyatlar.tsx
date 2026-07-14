@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Check, X, Minus, Sparkles, Zap, Crown, Star, ArrowRight } from 'lucide-react'
+import { Check, X, Minus, Sparkles, Zap, Crown, Star, ArrowRight, TrendingUp, Megaphone, Award, Infinity as InfinityIcon } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../store/auth'
 import { api, apiBase } from '../lib/api'
@@ -23,6 +23,16 @@ function usePaketlerPublic() {
     refetchOnWindowFocus: true,
   })
 }
+
+// Seanzy'ye özel (rakipte olmayan) özellikler için ikon eşlemesi
+const BENZERSIZ_IKON: Record<string, typeof Star> = {
+  google_review: Star,
+  pazarlama: TrendingUp,
+  reklam: Megaphone,
+  salon_skoru: Award,
+}
+const BENZERSIZ_OZELLIKLER = Object.entries(OZELLIKLER).filter(([, t]) => t.benzersiz)
+const BENZERSIZ_ADLAR = new Set(BENZERSIZ_OZELLIKLER.map(([, t]) => t.ad))
 
 // OZELLIKLER haritasını gruplarına ayır (Süper Admin panelindekiyle aynı mantık)
 const GRUPLAR_DINAMIK = Object.entries(
@@ -128,6 +138,36 @@ export default function Fiyatlar() {
         </div>
       </div>
 
+      {/* ── Seanzy'ye Özel Öne Çıkanlar ── */}
+      <div style={{ maxWidth: 1100, margin: '0 auto 56px', padding: '0 24px' }}>
+        <div style={{ borderRadius: 24, border: '1px solid rgba(201,169,110,.3)', background: 'linear-gradient(135deg, rgba(201,169,110,.1), rgba(201,169,110,.02))', padding: '32px 28px', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', width: 300, height: 300, borderRadius: '50%', filter: 'blur(90px)', background: 'rgba(201,169,110,.15)', top: -100, right: -60, pointerEvents: 'none' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, position: 'relative' }}>
+            <Sparkles size={16} style={{ color: 'var(--gold)' }} />
+            <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '.16em', textTransform: 'uppercase', color: 'var(--gold-text)' }}>Sadece Seanzy'de</span>
+          </div>
+          <h2 className="serif" style={{ fontSize: 'clamp(19px, 2.4vw, 26px)', fontWeight: 400, letterSpacing: '.04em', marginBottom: 22, position: 'relative' }}>
+            Rakiplerde <em style={{ color: 'var(--gold)' }}>bulamayacağınız</em> özellikler
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 18, position: 'relative' }}>
+            {BENZERSIZ_OZELLIKLER.map(([key, t]) => {
+              const BIcon = BENZERSIZ_IKON[key] || Star
+              return (
+                <div key={key} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                  <div style={{ width: 38, height: 38, borderRadius: 11, background: 'rgba(201,169,110,.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--gold)', flexShrink: 0 }}>
+                    <BIcon size={18} />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 3 }}>{t.ad}</div>
+                    <div style={{ fontSize: 12.5, color: 'var(--text2)', lineHeight: 1.5 }}>{t.aciklama}</div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+
       {/* ── Paket Kartları ── */}
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px 80px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: 20 }}>
         {PAKETLER.map((p) => {
@@ -138,6 +178,11 @@ export default function Fiyatlar() {
               {p.popular && (
                 <div style={{ position: 'absolute', top: -13, left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(135deg,#9A7A45,#E8D5B0)', color: '#0c0c0d', fontSize: 11.5, fontWeight: 700, letterSpacing: '.1em', padding: '5px 18px', borderRadius: 20, whiteSpace: 'nowrap', textTransform: 'uppercase' }}>
                   En Çok Tercih Edilen
+                </div>
+              )}
+              {p.fiyat_aylik === 0 && (
+                <div style={{ position: 'absolute', top: -13, left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(135deg,#3FA76A,#7FD9A0)', color: '#06210F', fontSize: 11.5, fontWeight: 700, letterSpacing: '.08em', padding: '5px 18px', borderRadius: 20, whiteSpace: 'nowrap', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <InfinityIcon size={13} /> Sonsuza Kadar Ücretsiz
                 </div>
               )}
 
@@ -164,6 +209,11 @@ export default function Fiyatlar() {
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 13.5 }}>
                     <Check size={15} style={{ color: p.renk === 'var(--gold)' ? 'var(--gold)' : p.renk, flexShrink: 0 }} />
                     <span style={{ color: 'var(--text2)' }}>{f}</span>
+                    {BENZERSIZ_ADLAR.has(f) && (
+                      <span title="Seanzy'ye özel" style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 9.5, background: 'rgba(201,169,110,.15)', color: 'var(--gold-text)', borderRadius: 20, padding: '2px 6px', fontWeight: 600, flexShrink: 0 }}>
+                        <Star size={9} />
+                      </span>
+                    )}
                   </div>
                 ))}
                 {p.dahilOlanlar.length > p.gosterilen.length && (
@@ -220,7 +270,14 @@ export default function Fiyatlar() {
                   <div key={key} style={{ display: 'grid', gridTemplateColumns: `1fr repeat(${PAKETLER.length}, 140px)`, borderTop: '1px solid var(--border)', transition: 'background .15s' }}
                     onMouseOver={(e) => (e.currentTarget as HTMLDivElement).style.background = 'var(--surface2)'}
                     onMouseOut={(e) => (e.currentTarget as HTMLDivElement).style.background = 'transparent'}>
-                    <div style={{ padding: '14px 24px', fontSize: 13.5, color: 'var(--text2)' }}>{tanim.ad}</div>
+                    <div style={{ padding: '14px 24px', fontSize: 13.5, color: 'var(--text2)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                      {tanim.ad}
+                      {tanim.benzersiz && (
+                        <span title="Seanzy'ye özel" style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 10, background: 'rgba(201,169,110,.15)', color: 'var(--gold-text)', borderRadius: 20, padding: '2px 7px', fontWeight: 600, flexShrink: 0 }}>
+                          <Star size={10} /> Seanzy'ye Özel
+                        </span>
+                      )}
+                    </div>
                     {PAKETLER.map((p) => (
                       <div key={p.id} style={{ padding: '14px 12px', borderLeft: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: p.popular ? 'rgba(201,169,110,.03)' : 'transparent' }}>
                         <Hucre val={erisimVar(p.id, harita?.[key] ?? tanim.min)} renk={p.renk === 'var(--gold)' ? '#C9A96E' : p.renk} />
