@@ -2,7 +2,7 @@ import type { OZELLIKLER } from './ozellikler'
 
 export interface RehberGirdi {
   yol?: string
-  /** Kurulumu/kullanımı kimin yaptığı: Mudur, Personel, Müşteri, Süper Admin veya birden fazlası */
+  /** Kurulumu/kullanımı kimin yaptığı: Mudur, Personel, Müşteri, Destek Ekibi veya birden fazlası */
   kim: string
   adimlar: string[]
 }
@@ -80,7 +80,7 @@ export const KULLANIM_REHBERI: Partial<Record<keyof typeof OZELLIKLER, RehberGir
     ],
   },
   musteri_paneli: {
-    kim: 'Süper Admin / Paket (otomatik)',
+    kim: 'Destek Ekibi / Paket (otomatik)',
     adimlar: [
       'Bu, ayrı bir kurulum gerektirmeyen bir erişim anahtarıdır — paketinizde açıksa müşterileriniz Müşteri Portalı\'na giriş yapabilir.',
       'Kapalıysa (örn. Ücretsiz pakette) müşteri girişi tamamen engellenir, "Bu panel paketinize dahil değil" mesajı görülür.',
@@ -126,7 +126,7 @@ export const KULLANIM_REHBERI: Partial<Record<keyof typeof OZELLIKLER, RehberGir
     ],
   },
   personel_paneli: {
-    kim: 'Süper Admin / Paket (otomatik)',
+    kim: 'Destek Ekibi / Paket (otomatik)',
     adimlar: [
       'Ayrı bir kurulum gerektirmez — paketinizde açıksa personeliniz kendi hesabıyla giriş yapıp günlük programını görebilir.',
       'Kapalıysa personel girişi engellenir, programlarını sadece siz (mudur) yönetip görüntülersiniz.',
@@ -162,11 +162,11 @@ export const KULLANIM_REHBERI: Partial<Record<keyof typeof OZELLIKLER, RehberGir
   },
   email_sms: {
     yol: '/ayarlar',
-    kim: 'Mudur (talep), Süper Admin (fiili kurulum)',
+    kim: 'Mudur (talep), Destek Ekibi (fiili kurulum)',
     adimlar: [
       'Mudur: Ayarlar sayfasında "Bildirim Kanalları" bölümünden E-posta/SMS/WhatsApp kanallarını hangilerinin aktif olacağını seçin.',
       'Eğer SMS/WhatsApp için işletmenize özel bir sağlayıcı (kendi API hesabınız) kullanmak isterseniz, aynı sayfadan "Kurulum Talebi" oluşturun (telefon, işletme adı, tercih ettiğiniz sağlayıcı).',
-      'Süper Admin: Gelen talebi "Entegrasyon Talepleri" ekranından görür, sizinle iletişime geçip gerekli API bilgilerini arka planda kendisi girer ve talebi "Tamamlandı" yapar.',
+      'Destek Ekibi: Gelen talebi "Entegrasyon Talepleri" ekranından görür, sizinle iletişime geçip gerekli API bilgilerini arka planda kendisi girer ve talebi "Tamamlandı" yapar.',
       'Kurulum tamamlanana kadar sistem, Seanzy\'nin genel/varsayılan e-posta-SMS altyapısını kullanmaya devam eder — yani kanal hemen çalışır, özel kurulum sadece kendi markanızla göndermek istediğinizde gerekir.',
       'Randevu onayı, hatırlatma gibi mesajlar bu ayara göre otomatik müşteriye gönderilir.',
     ],
@@ -219,7 +219,7 @@ export const KULLANIM_REHBERI: Partial<Record<keyof typeof OZELLIKLER, RehberGir
     kim: 'Mudur',
     adimlar: [
       'Anket sayfasına girin, "Google Değerlendirme" bölümünü bulun.',
-      'Google İşletme Profilinizden "yorum yazma linkinizi" kopyalayıp buraya yapıştırın (tamamen kendi panelinizden, Süper Admin\'e ihtiyaç yok).',
+      'Google İşletme Profilinizden "yorum yazma linkinizi" kopyalayıp buraya yapıştırın (tamamen kendi panelinizden yapılır, destek ekibine ihtiyaç yoktur).',
       'Ayarı kaydettikten sonra: müşteri anketten yüksek puan verirse (ör. 4-5 yıldız) otomatik olarak bu Google linkine yönlendirilir; düşük puan verirse yönlendirme yapılmaz (olumsuz yorumların herkese açık Google\'a düşmesi önlenir).',
     ],
   },
@@ -270,10 +270,10 @@ export const KULLANIM_REHBERI: Partial<Record<keyof typeof OZELLIKLER, RehberGir
     ],
   },
   cok_sube: {
-    kim: 'Süper Admin',
+    kim: 'Destek Ekibi',
     adimlar: [
-      'Bu özellik kendi panelinizden açılamaz — Süper Admin ile iletişime geçip (info@homedya.com) ek şube talebinde bulunmanız gerekir.',
-      'Süper Admin, işletmenize yeni bir şube tanımlar; her şube kendi takvimi, personeli ve stoğuyla ayrı çalışır.',
+      'Bu özellik kendi panelinizden açılamaz — Destek Ekibi ile iletişime geçip (info@homedya.com) ek şube talebinde bulunmanız gerekir.',
+      'Destek Ekibi, işletmenize yeni bir şube tanımlar; her şube kendi takvimi, personeli ve stoğuyla ayrı çalışır.',
       'Şubeler arası geçiş, panelin üst kısmında çıkan şube seçiciyle yapılır; merkezi raporlarda tüm şubeler birleşik görünür.',
     ],
   },
@@ -293,10 +293,10 @@ export const KULLANIM_REHBERI: Partial<Record<keyof typeof OZELLIKLER, RehberGir
     ],
   },
   ozel_entegrasyon: {
-    kim: 'Mudur (talep), Süper Admin (kurulum)',
+    kim: 'Mudur (talep), Destek Ekibi (kurulum)',
     adimlar: [
       'Mudur: info@homedya.com üzerinden ihtiyacınız olan özel entegrasyonu (muhasebe programı, kendi API\'niz, farklı bir randevu sistemi vb.) bize iletin.',
-      'Süper Admin: İhtiyacı değerlendirip kurulum ve entegrasyon sürecini sizin için özel olarak (arka planda, teknik ekip tarafından) yürütür.',
+      'Destek Ekibi: İhtiyacı değerlendirip kurulum ve entegrasyon sürecini sizin için özel olarak (arka planda, teknik ekip tarafından) yürütür.',
       'Kurulum tamamlandığında size ayrıca bilgi verilir, panelinizde ilgili özellik aktif hale gelir.',
     ],
   },
