@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { NavLink, useNavigate } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 import {
   LayoutDashboard, Calendar, ClipboardList, Users, Package, UserCheck,
   Sparkles, Coins, BarChart3, Gift, Hourglass, Settings, LogOut, Megaphone,
@@ -11,7 +12,8 @@ import { useAuth } from '../store/auth'
 import { useT } from '../lib/ceviri'
 import DilSecici from './DilSecici'
 import UygulamaYukle from './UygulamaYukle'
-import { OZELLIKLER, PAKET_RENK, paketErisi, type PaketTuru } from '../lib/ozellikler'
+import { OZELLIKLER, PAKET_RENK, paketErisi, type PaketTuru, type SaPaket } from '../lib/ozellikler'
+import type { OzellikHaritasi } from '../hooks/useOzellikHaritasi'
 
 interface NavItem { to: string; label: string; icon: LucideIcon; ozellik?: keyof typeof OZELLIKLER }
 interface NavGroup { g: string; items: NavItem[] }
@@ -89,6 +91,7 @@ export default function Sidebar({ mobAcik, onKapat }: Props) {
   const { user, logout } = useAuth()
   const nav = useNavigate()
   const t = useT()
+  const qc = useQueryClient()
   const rol = user?.rol || 'mudur'
   const paket = user?.paket_turu || 'basic'
   const groups = NAV[rol] || NAV.mudur
@@ -96,17 +99,22 @@ export default function Sidebar({ mobAcik, onKapat }: Props) {
   const initials = (user?.ad?.[0] || '') + (user?.soyad?.[0] || '')
   const rolAd = t('rol.' + rol)
   const [kilitModal, setKilitModal] = useState<KilitModal | null>(null)
+  const harita = qc.getQueryData<OzellikHaritasi>(['ozellik-haritasi'])
+  const paketler = (qc.getQueryData<SaPaket[]>(['sa-paketler']) ?? []).filter((p) => p.aktif)
+
+  function gerekenMin(item: NavItem): PaketTuru {
+    const tanim = item.ozellik ? OZELLIKLER[item.ozellik] : null
+    return (item.ozellik && harita?.[item.ozellik]) ?? tanim?.min ?? 'pro'
+  }
 
   function itemErisim(item: NavItem): boolean {
     if (!item.ozellik || rol !== 'mudur') return true
-    const tanim = OZELLIKLER[item.ozellik]
-    return tanim ? paketErisi(paket, tanim.min) : true
+    return paketErisi(paket, gerekenMin(item), paketler)
   }
 
   function kilitTikla(item: NavItem) {
-    const tanim = item.ozellik ? OZELLIKLER[item.ozellik] : null
-    const min = (tanim?.min || 'pro') as PaketTuru
-    setKilitModal({ label: t(item.label), min, renk: PAKET_RENK[min] })
+    const min = gerekenMin(item)
+    setKilitModal({ label: t(item.label), min, renk: PAKET_RENK[min] ?? 'var(--faint)' })
   }
 
   return (
@@ -125,8 +133,7 @@ export default function Sidebar({ mobAcik, onKapat }: Props) {
             {grp.items.map((it) => {
               const acik = itemErisim(it)
               if (!acik) {
-                const tanim = it.ozellik ? OZELLIKLER[it.ozellik] : null
-                const kilitRenk = tanim ? PAKET_RENK[tanim.min as PaketTuru] : 'var(--faint)'
+                const kilitRenk = PAKET_RENK[gerekenMin(it)] ?? 'var(--faint)'
                 return (
                   <div key={it.to} className="sb-link sb-kilitli" style={{ opacity: 0.5, cursor: 'pointer' }}
                     onClick={() => kilitTikla(it)}>
