@@ -3,7 +3,7 @@ import { useAuth } from '../store/auth'
 import { OZELLIKLER, paketErisi, type SaPaket } from '../lib/ozellikler'
 import type { OzellikHaritasi } from './useOzellikHaritasi'
 
-const FALLBACK: Record<string, number> = { basic: 1, pro: 2, enterprise: 3 }
+const FALLBACK: Record<string, number> = { free: 1, basic: 2, pro: 3, enterprise: 4 }
 
 export function useErisim(ozellik: keyof typeof OZELLIKLER): boolean {
   const paket = useAuth((s) => s.user?.paket_turu)

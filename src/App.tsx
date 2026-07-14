@@ -4,6 +4,7 @@ import { HashRouter, Routes, Route, Navigate, useNavigate } from 'react-router-d
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from './store/auth'
 import { useOzellikHaritasi } from './hooks/useOzellikHaritasi'
+import { useErisim } from './hooks/useErisim'
 import { apiGet } from './lib/api'
 import AppLayout from './components/AppLayout'
 import Login from './pages/Login'
@@ -49,6 +50,22 @@ function Protected({ children }: { children: ReactNode }) {
   return token ? <>{children}</> : <Navigate to="/login" replace />
 }
 
+function PaketYok() {
+  const logout = useAuth((s) => s.logout)
+  const nav = useNavigate()
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100dvh', padding: '32px 24px', textAlign: 'center' }}>
+      <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 10 }}>Bu panel paketinize dahil değil</div>
+      <div style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.6, marginBottom: 24, maxWidth: 360 }}>
+        Bu hesap türü için erişim, işletmenizin mevcut paketinde açık değil. Lütfen işletme yöneticinizle iletişime geçin.
+      </div>
+      <button className="btn btn-gold" onClick={() => { logout(); nav('/login') }} style={{ padding: '11px 24px' }}>
+        Çıkış Yap
+      </button>
+    </div>
+  )
+}
+
 function useProfilSync() {
   const token = useAuth((s) => s.token)
   const user = useAuth((s) => s.user)
@@ -87,6 +104,8 @@ function Routed() {
   const rol = useAuth((s) => s.user?.rol)
   useOzellikHaritasi() // Uygulama başlangıcında feature map'i önbellekle
   useProfilSync()      // SA paket değişikliğini sessizce senkronize et
+  const musteriPaneliAcik = useErisim('musteri_paneli')
+  const personelPaneliAcik = useErisim('personel_paneli')
   const personelMod = rol === 'personel'
   const superMod = rol === 'superadmin'
   const musteriMod = rol === 'musteri'
@@ -112,18 +131,26 @@ function Routed() {
             <Route path="/sa-bildirimler"     element={<Bildirimler />} />
           </>
         ) : musteriMod ? (
-          <>
-            <Route path="/randevularim" element={<MusteriRandevularim />} />
-            <Route path="/randevu-al" element={<MusteriRandevuAl />} />
-          </>
+          musteriPaneliAcik ? (
+            <>
+              <Route path="/randevularim" element={<MusteriRandevularim />} />
+              <Route path="/randevu-al" element={<MusteriRandevuAl />} />
+            </>
+          ) : (
+            <Route path="/randevularim" element={<PaketYok />} />
+          )
         ) : personelMod ? (
-          <>
-            <Route path="/programim" element={<PersonelProgram />} />
-            <Route path="/randevular" element={<Randevular />} />
-            <Route path="/musteriler" element={<Musteriler />} />
-            <Route path="/urun-stok" element={<UrunStok />} />
-            <Route path="/bildirim-ayarlari" element={<BildirimAyarlari />} />
-          </>
+          personelPaneliAcik ? (
+            <>
+              <Route path="/programim" element={<PersonelProgram />} />
+              <Route path="/randevular" element={<Randevular />} />
+              <Route path="/musteriler" element={<Musteriler />} />
+              <Route path="/urun-stok" element={<UrunStok />} />
+              <Route path="/bildirim-ayarlari" element={<BildirimAyarlari />} />
+            </>
+          ) : (
+            <Route path="/programim" element={<PaketYok />} />
+          )
         ) : (
           <>
             <Route path="/genel-bakis" element={<GenelBakis />} />

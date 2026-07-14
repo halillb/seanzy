@@ -17,7 +17,7 @@ export interface SaPaket {
   aktif: boolean
 }
 
-const FALLBACK_SIRA: Record<string, number> = { basic: 1, pro: 2, enterprise: 3 }
+const FALLBACK_SIRA: Record<string, number> = { free: 1, basic: 2, pro: 3, enterprise: 4 }
 
 export function paketErisi(
   paket: string | undefined,
@@ -33,24 +33,27 @@ export function paketErisi(
 
 // Görsel yardımcılar — basic/pro/enterprise için sabit, diğerleri fallback
 export const PAKET_RENK: Record<string, string> = {
+  free: '#8DA0A8',
   basic: '#8DA9C4',
   pro: '#C9A96E',
   enterprise: '#C084FC',
 }
 
 export const PAKET_AD: Record<string, string> = {
+  free: 'Ücretsiz',
   basic: 'Basic',
   pro: 'Pro',
   enterprise: 'Enterprise',
 }
 
 export const OZELLIKLER: Record<string, OzellikTanim> = {
+  /* ── Ücretsiz ─────────────────────────────────────────── */
+  takvim:          { ad: 'Takvim',               aciklama: 'Gün/hafta/ay takvim görünümü',            min: 'free',       grup: 'Randevu'   },
+  randevu:         { ad: 'Randevu Yönetimi',     aciklama: 'Randevu oluşturma ve geldi/gelmedi takibi', min: 'free',      grup: 'Randevu'   },
+  musteri:         { ad: 'Müşteri Yönetimi',     aciklama: 'Müşteri kayıt ekleme',                    min: 'free',       grup: 'Müşteri'   },
   /* ── Basic ────────────────────────────────────────────── */
-  takvim:          { ad: 'Takvim',               aciklama: 'Gün/hafta/ay takvim görünümü',            min: 'basic',      grup: 'Randevu'   },
-  randevu:         { ad: 'Randevu Yönetimi',     aciklama: 'Sınırsız randevu oluşturma ve takibi',    min: 'basic',      grup: 'Randevu'   },
   online_randevu:  { ad: 'Online Randevu',       aciklama: 'Müşterilere özel randevu sayfası linki',  min: 'basic',      grup: 'Randevu'   },
   bekleyen:        { ad: 'Bekleyen Onaylar',     aciklama: 'Randevu onay/red akışı',                  min: 'basic',      grup: 'Randevu'   },
-  musteri:         { ad: 'Müşteri Yönetimi',     aciklama: 'Müşteri kayıt, not ve geçmiş takibi',     min: 'basic',      grup: 'Müşteri'   },
   personel:        { ad: 'Personel',             aciklama: 'Personel hesapları ve program takibi',    min: 'basic',      grup: 'Personel'  },
   hizmetler:       { ad: 'Hizmetler',            aciklama: 'Hizmet tanımları ve fiyatları',           min: 'basic',      grup: 'Hizmet'    },
   bildirimler:     { ad: 'Bildirimler',          aciklama: 'Sistem içi anlık bildirimler (zil)',       min: 'basic',      grup: 'İletişim'  },
@@ -71,6 +74,8 @@ export const OZELLIKLER: Record<string, OzellikTanim> = {
   reklam:          { ad: 'Reklam Anlaşmaları',   aciklama: 'Influencer ve reklam kampanya takibi',    min: 'pro',        grup: 'Pazarlama', benzersiz: true },
   disa_aktar:      { ad: 'Dışa Aktarma',         aciklama: 'Excel/CSV veri aktarımı',                 min: 'pro',        grup: 'Sistem'    },
   salon_skoru:     { ad: 'Salon Skoru',          aciklama: 'Bütünleşik işletme sağlık & doluluk skoru', min: 'pro',     grup: 'Raporlar',  benzersiz: true },
+  musteri_paneli:  { ad: 'Müşteri Paneli Erişimi', aciklama: 'Müşterilerin kendi hesabıyla giriş yapıp portalı kullanması', min: 'basic', grup: 'Müşteri' },
+  personel_paneli: { ad: 'Personel Paneli Erişimi', aciklama: 'Personelin kendi hesabıyla giriş yapıp programını görmesi', min: 'basic', grup: 'Personel' },
   /* ── Enterprise ──────────────────────────────────────── */
   urun_stok:       { ad: 'Ürün & Stok',         aciklama: 'Ürün satışı, stok ve barkod yönetimi',    min: 'enterprise', grup: 'Ürün'      },
   cok_sube:        { ad: 'Çoklu Şube',          aciklama: 'Birden fazla şube ve personel yönetimi',  min: 'enterprise', grup: 'Sistem'    },
