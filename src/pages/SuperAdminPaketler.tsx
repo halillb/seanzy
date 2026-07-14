@@ -47,6 +47,8 @@ export default function SuperAdminPaketler() {
   const [aktarModal, setAktarModal] = useState<Paket | null>(null)
   const [aktarHedef, setAktarHedef] = useState('')
   const [aktarSecili, setAktarSecili] = useState<number[]>([])
+  const [silModal, setSilModal] = useState<Paket | null>(null)
+  const [silHedef, setSilHedef] = useState('')
   const [hata, setHata] = useState('')
   const [dragId, setDragId] = useState<number | null>(null)
   const [dragOverId, setDragOverId] = useState<number | null>(null)
@@ -82,8 +84,13 @@ export default function SuperAdminPaketler() {
   })
 
   const silMut = useMutation({
-    mutationFn: (id: number) => apiPost('superadmin.php', 'paket_sil', { id }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['sa-paketler'] }),
+    mutationFn: ({ id, hedef_kod }: { id: number; hedef_kod?: string }) => apiPost('superadmin.php', 'paket_sil', { id, hedef_kod }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['sa-paketler'] })
+      qc.invalidateQueries({ queryKey: ['ozellik-haritasi'] })
+      setSilModal(null)
+      setSilHedef('')
+    },
     onError: (e) => setHata((e as Error).message),
   })
 
@@ -235,7 +242,24 @@ export default function SuperAdminPaketler() {
 
                       {isAcik && (
                         <div style={{ borderTop: '1px solid var(--border)', padding: '16px 20px' }}>
-                          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text2)', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '.05em' }}>Pazarlama Özellikleri (müşteriye gösterilen)</div>
+                          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text2)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.05em' }}>Özellik Haritasından Otomatik (bu paketin erişebildikleri)</div>
+                          <div style={{ fontSize: 11.5, color: 'var(--muted)', marginBottom: 10 }}>Bu liste Özellik Haritası'na göre otomatik oluşur, buradan değiştirilemez — Özellik Haritası sekmesinden düzenleyin.</div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 18 }}>
+                            {Object.entries(OZELLIKLER)
+                              .filter(([key, t]) => {
+                                const sira = (k: string) => paketler.find((pp) => pp.kod === k)?.sira ?? 0
+                                return sira(paket.kod) >= sira(harita[key] ?? t.min)
+                              })
+                              .map(([key, t]) => (
+                                <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 10px', borderRadius: 8, background: 'var(--surface)' }}>
+                                  <Check size={13} style={{ color: renk, flexShrink: 0 }} />
+                                  <span style={{ flex: 1, fontSize: 13, color: 'var(--text)' }}>{t.ad}</span>
+                                  <span style={{ fontSize: 10, background: 'var(--surface3)', color: 'var(--muted)', borderRadius: 4, padding: '1px 5px', fontFamily: 'monospace' }}>{key}</span>
+                                </div>
+                              ))}
+                          </div>
+
+                          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text2)', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '.05em' }}>Ek Pazarlama Maddeleri (elle eklenen)</div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                             {paket.ozellikler.map((oz, oidx) => (
                               <div key={oidx} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 10px', borderRadius: 8, background: 'var(--surface)' }}>
@@ -272,14 +296,18 @@ export default function SuperAdminPaketler() {
                               <Plus size={14} /> Ekle
                             </button>
                           </div>
-                          {paket.isletme_sayi === 0 && (
-                            <div style={{ marginTop: 14, borderTop: '1px solid var(--border)', paddingTop: 14 }}>
-                              <button className="btn btn-sm btn-ghost" style={{ color: '#E74C3C', gap: 6 }}
-                                onClick={async () => { if (await confirmAsync({ message: `"${paket.ad}" paketini silmek istediğinize emin misiniz?`, tehlikeli: true, onaylaMetin: 'Sil' })) silMut.mutate(paket.id) }}>
-                                <Trash2 size={13} /> Paketi Sil
-                              </button>
-                            </div>
-                          )}
+                          <div style={{ marginTop: 14, borderTop: '1px solid var(--border)', paddingTop: 14 }}>
+                            <button className="btn btn-sm btn-ghost" style={{ color: '#E74C3C', gap: 6 }}
+                              onClick={async () => {
+                                if (paket.isletme_sayi === 0) {
+                                  if (await confirmAsync({ message: `"${paket.ad}" paketini silmek istediğinize emin misiniz?`, tehlikeli: true, onaylaMetin: 'Sil' })) silMut.mutate({ id: paket.id })
+                                } else {
+                                  setSilModal(paket); setSilHedef('')
+                                }
+                              }}>
+                              <Trash2 size={13} /> Paketi Sil
+                            </button>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -428,6 +456,36 @@ export default function SuperAdminPaketler() {
               <button className="btn btn-gold" disabled={aktarMut.isPending || !aktarHedef || aktarSecili.length === 0}
                 onClick={() => aktarMut.mutate()}>
                 {aktarMut.isPending ? <span className="spin" /> : `${aktarSecili.length} İşletmeyi Aktar`}
+              </button>
+            </div>
+          </>
+        )}
+      </Modal>
+
+      {/* Paket sil — hedef paket seçimi */}
+      <Modal open={!!silModal} onClose={() => { setSilModal(null); setSilHedef('') }} title={`Paketi Sil — ${silModal?.ad}`} maxWidth={440}>
+        {silModal && (
+          <>
+            <div className="modal-b">
+              <div style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.6, marginBottom: 16 }}>
+                Bu pakette <strong>{silModal.isletme_sayi}</strong> aktif işletme var ve/veya Özellik Haritası'nda bu pakete atanmış özellikler olabilir.
+                Silmeden önce bunların aktarılacağı hedef paketi seçin — işletmeler ve özellik haritası kayıtları otomatik olarak seçtiğiniz pakete taşınacak.
+              </div>
+              <div className="field" style={{ margin: 0 }}>
+                <label>Hedef Paket</label>
+                <Select className="input" value={silHedef} onChange={(e) => setSilHedef(e.target.value)}>
+                  <option value="">Seçiniz…</option>
+                  {paketler.filter((p) => p.kod !== silModal.kod && p.aktif).map((p) => (
+                    <option key={p.kod} value={p.kod}>{p.ad}</option>
+                  ))}
+                </Select>
+              </div>
+            </div>
+            <div className="modal-f">
+              <button className="btn btn-ghost" onClick={() => { setSilModal(null); setSilHedef('') }}>İptal</button>
+              <button className="btn" style={{ background: '#E74C3C', color: '#fff' }} disabled={silMut.isPending || !silHedef}
+                onClick={() => silMut.mutate({ id: silModal.id, hedef_kod: silHedef })}>
+                {silMut.isPending ? <span className="spin" /> : 'Sil ve Aktar'}
               </button>
             </div>
           </>

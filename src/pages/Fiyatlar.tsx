@@ -119,7 +119,7 @@ export default function Fiyatlar() {
       </div>
 
       {/* ── Paket Kartları ── */}
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px 80px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px 80px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: 20 }}>
         {PAKETLER.map((p) => {
           const Icon = p.icon
           const fiyat = tl(p.fiyat_aylik, yillik)
