@@ -58,9 +58,13 @@ export default function Fiyatlar() {
   const populerKod = paketler.find((p) => p.kod === 'pro')?.kod ?? paketler[Math.floor((paketler.length - 1) / 2)]?.kod
 
   const PAKETLER = paketler.map((p, i) => {
-    const dahilOlanlar = p.ozellikler.length > 0
-      ? p.ozellikler.filter((o) => o.aktif).map((o) => o.ad)
-      : Object.entries(OZELLIKLER).filter(([key]) => erisimVar(p.kod, harita?.[key] ?? OZELLIKLER[key].min)).map(([, t]) => t.ad)
+    // Otomatik liste: OZELLIKLER'in tanımlı (kademeli) sırasıyla — her üst paket bir alttakinin
+    // aynı sırasını korur, üstüne yeni açılanları ekler. Elle eklenmiş ekstra maddeler varsa sonuna eklenir.
+    const otomatik = Object.entries(OZELLIKLER)
+      .filter(([key]) => erisimVar(p.kod, harita?.[key] ?? OZELLIKLER[key].min))
+      .map(([, t]) => t.ad)
+    const ekstra = p.ozellikler.filter((o) => o.aktif && !otomatik.includes(o.ad)).map((o) => o.ad)
+    const dahilOlanlar = [...otomatik, ...ekstra]
     return {
       id: p.kod,
       ad: p.ad,
