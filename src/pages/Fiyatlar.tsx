@@ -1,124 +1,42 @@
 import { useState } from 'react'
-import { Check, X, Minus, Sparkles, Zap, Crown, ArrowRight } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { Check, X, Minus, Sparkles, Zap, Crown, Star, ArrowRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../store/auth'
+import { api, apiBase } from '../lib/api'
+import { OZELLIKLER } from '../lib/ozellikler'
+import { useOzellikHaritasi } from '../hooks/useOzellikHaritasi'
 
-/* ─── Paket verileri ─────────────────────────────────── */
-const PAKETLER = [
-  {
-    id: 'basic',
-    ad: 'Basic',
-    fiyat_aylik: 299,
-    fiyat_yillik: 249,
-    aciklama: 'Yeni başlayan güzellik merkezleri için temel ihtiyaçlar',
-    renk: '#8DA9C4',
-    icon: Zap,
-    popular: false,
-    kota_musteri: 300,
-    kota_personel: 2,
-  },
-  {
-    id: 'pro',
-    ad: 'Pro',
-    fiyat_aylik: 599,
-    fiyat_yillik: 499,
-    aciklama: 'Büyüyen işletmeler için eksiksiz yönetim çözümü',
-    renk: 'var(--gold)',
-    icon: Sparkles,
-    popular: true,
-    kota_musteri: 2000,
-    kota_personel: 10,
-  },
-  {
-    id: 'enterprise',
-    ad: 'Enterprise',
-    fiyat_aylik: 999,
-    fiyat_yillik: 849,
-    aciklama: 'Çok şubeli zincirler ve kurumsal yapılar için',
-    renk: '#C084FC',
-    icon: Crown,
-    popular: false,
-    kota_musteri: -1,
-    kota_personel: -1,
-  },
-]
+interface PublicOzellik { ad: string; kod?: string; aktif: boolean }
+interface PublicPaket { ad: string; kod: string; fiyat: number; sira: number; renk: string | null; ozellikler: PublicOzellik[] }
 
-/* ─── Özellik karşılaştırma tablosu ─────────────────── */
-const GRUPLAR: { baslik: string; ozellikler: { ad: string; basic: boolean | string; pro: boolean | string; enterprise: boolean | string }[] }[] = [
-  {
-    baslik: 'Randevu & Takvim',
-    ozellikler: [
-      { ad: 'Online randevu yönetimi', basic: true, pro: true, enterprise: true },
-      { ad: 'Takvim görünümü (gün / hafta / ay)', basic: true, pro: true, enterprise: true },
-      { ad: 'Bekleyen randevu onay sistemi', basic: true, pro: true, enterprise: true },
-      { ad: 'Personel bazlı takvim', basic: false, pro: true, enterprise: true },
-      { ad: 'Çoklu kaynak takvimi', basic: false, pro: false, enterprise: true },
-    ],
-  },
-  {
-    baslik: 'Müşteri Yönetimi',
-    ozellikler: [
-      { ad: 'Müşteri kaydı ve geçmişi', basic: true, pro: true, enterprise: true },
-      { ad: 'Müşteri kotası', basic: '300 müşteri', pro: '2.000 müşteri', enterprise: 'Sınırsız' },
-      { ad: 'Müşteri kaynak takibi', basic: false, pro: true, enterprise: true },
-      { ad: 'Müşteri sadakat & puanlama', basic: false, pro: true, enterprise: true },
-      { ad: 'Özel müşteri etiketleri', basic: false, pro: true, enterprise: true },
-    ],
-  },
-  {
-    baslik: 'Personel',
-    ozellikler: [
-      { ad: 'Personel hesabı', basic: '2 personel', pro: '10 personel', enterprise: 'Sınırsız' },
-      { ad: 'Personel program yönetimi', basic: true, pro: true, enterprise: true },
-      { ad: 'Personel performans raporu', basic: false, pro: true, enterprise: true },
-      { ad: 'Maaş & prim takibi', basic: false, pro: true, enterprise: true },
-    ],
-  },
-  {
-    baslik: 'Hizmet & Paketler',
-    ozellikler: [
-      { ad: 'Hizmet tanımları', basic: true, pro: true, enterprise: true },
-      { ad: 'Seans tabanlı paket satışı', basic: false, pro: true, enterprise: true },
-      { ad: 'Paket ilerleme takibi', basic: false, pro: true, enterprise: true },
-      { ad: 'Toplu hizmet içe aktarma', basic: false, pro: true, enterprise: true },
-    ],
-  },
-  {
-    baslik: 'Finans & Raporlar',
-    ozellikler: [
-      { ad: 'Temel gelir takibi', basic: true, pro: true, enterprise: true },
-      { ad: 'Gider & kâr/zarar raporu', basic: false, pro: true, enterprise: true },
-      { ad: 'Dışa aktarma (Excel / CSV)', basic: false, pro: true, enterprise: true },
-      { ad: 'Gelişmiş analitik raporlar', basic: false, pro: true, enterprise: true },
-      { ad: 'Özel rapor oluşturucu', basic: false, pro: false, enterprise: true },
-    ],
-  },
-  {
-    baslik: 'Pazarlama',
-    ozellikler: [
-      { ad: 'Kampanya yönetimi', basic: false, pro: true, enterprise: true },
-      { ad: 'Reklam & influencer anlaşmaları', basic: false, pro: true, enterprise: true },
-      { ad: 'Pazarlama ROI analizi', basic: false, pro: true, enterprise: true },
-      { ad: 'Toplu SMS / bildirim gönderimi', basic: false, pro: true, enterprise: true },
-      { ad: 'Otomatik hatırlatma bildirimleri', basic: false, pro: true, enterprise: true },
-    ],
-  },
-  {
-    baslik: 'Destek',
-    ozellikler: [
-      { ad: 'E-posta desteği', basic: true, pro: true, enterprise: true },
-      { ad: 'Öncelikli destek hattı', basic: false, pro: true, enterprise: true },
-      { ad: 'Özel müşteri temsilcisi', basic: false, pro: false, enterprise: true },
-      { ad: 'Kurulum & onboarding desteği', basic: false, pro: false, enterprise: true },
-    ],
-  },
-]
+const IKONLAR = [Zap, Sparkles, Crown, Star]
+
+function usePaketlerPublic() {
+  return useQuery<PublicPaket[]>({
+    queryKey: ['paketler-public'],
+    queryFn: async () => {
+      const r = await api.get<{ data: PublicPaket[] }>(`${apiBase()}/api/paketler-public`)
+      return r.data.data ?? []
+    },
+    staleTime: 30_000,
+    refetchOnWindowFocus: true,
+  })
+}
+
+// OZELLIKLER haritasını gruplarına ayır (Süper Admin panelindekiyle aynı mantık)
+const GRUPLAR_DINAMIK = Object.entries(
+  Object.entries(OZELLIKLER).reduce<Record<string, { key: string; tanim: typeof OZELLIKLER[string] }[]>>((acc, [key, t]) => {
+    if (!acc[t.grup]) acc[t.grup] = []
+    acc[t.grup].push({ key, tanim: t })
+    return acc
+  }, {})
+)
 
 /* ─── Yardımcı bileşenler ────────────────────────────── */
-function Hucre({ val, renk }: { val: boolean | string; renk: string }) {
-  if (val === false) return <div style={{ display: 'flex', justifyContent: 'center' }}><X size={16} style={{ color: 'var(--faint)' }} /></div>
-  if (val === true) return <div style={{ display: 'flex', justifyContent: 'center' }}><Check size={16} style={{ color: renk, filter: `drop-shadow(0 0 4px ${renk}60)` }} /></div>
-  return <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--text2)', fontWeight: 500 }}>{val}</div>
+function Hucre({ val, renk }: { val: boolean; renk: string }) {
+  if (!val) return <div style={{ display: 'flex', justifyContent: 'center' }}><X size={16} style={{ color: 'var(--faint)' }} /></div>
+  return <div style={{ display: 'flex', justifyContent: 'center' }}><Check size={16} style={{ color: renk, filter: `drop-shadow(0 0 4px ${renk}60)` }} /></div>
 }
 
 const tl = (n: number, yillik: boolean) => {
@@ -131,6 +49,28 @@ export default function Fiyatlar() {
   const [yillik, setYillik] = useState(false)
   const token = useAuth((s) => s.token)
   const rol = useAuth((s) => s.user?.rol)
+  const { data: paketlerApi } = usePaketlerPublic()
+  const { data: harita } = useOzellikHaritasi()
+
+  const paketler = paketlerApi ?? []
+  const siraOf = (kod: string) => paketler.find((p) => p.kod === kod)?.sira ?? 0
+  const erisimVar = (paketKod: string, gerekenMin: string) => siraOf(paketKod) >= siraOf(gerekenMin)
+  const populerKod = paketler.find((p) => p.kod === 'pro')?.kod ?? paketler[Math.floor((paketler.length - 1) / 2)]?.kod
+
+  const PAKETLER = paketler.map((p, i) => {
+    const dahilOlanlar = p.ozellikler.length > 0
+      ? p.ozellikler.filter((o) => o.aktif).map((o) => o.ad)
+      : Object.entries(OZELLIKLER).filter(([key]) => erisimVar(p.kod, harita?.[key] ?? OZELLIKLER[key].min)).map(([, t]) => t.ad)
+    return {
+      id: p.kod,
+      ad: p.ad,
+      fiyat_aylik: p.fiyat,
+      renk: p.renk || '#C9A96E',
+      icon: IKONLAR[i % IKONLAR.length],
+      popular: p.kod === populerKod,
+      dahilOlanlar,
+    }
+  })
 
   // Giriş yapmış kullanıcı için panele dön hedefi
   const panelHedef = rol === 'superadmin' ? '/sa-genel' : rol === 'personel' ? '/programim' : rol === 'musteri' ? '/randevularim' : '/genel-bakis'
@@ -198,7 +138,6 @@ export default function Fiyatlar() {
                   </div>
                   <span style={{ fontSize: 18, fontWeight: 600 }}>{p.ad}</span>
                 </div>
-                <p style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.6, margin: 0 }}>{p.aciklama}</p>
               </div>
 
               <div>
@@ -211,13 +150,7 @@ export default function Fiyatlar() {
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
                 <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text2)', textTransform: 'uppercase', letterSpacing: '.08em' }}>Dahil Olanlar</div>
-                {[
-                  p.kota_musteri === -1 ? 'Sınırsız müşteri' : `${p.kota_musteri.toLocaleString('tr-TR')} müşteri kotası`,
-                  p.kota_personel === -1 ? 'Sınırsız personel hesabı' : `${p.kota_personel} personel hesabı`,
-                  ...(p.id === 'basic' ? ['Randevu yönetimi', 'Müşteri kayıt sistemi', 'Temel finans takibi'] : []),
-                  ...(p.id === 'pro' ? ['Randevu & takvim', 'Paket satışı & seans takibi', 'Finans & raporlar', 'Pazarlama araçları', 'Otomatik bildirimler'] : []),
-                  ...(p.id === 'enterprise' ? ['Tüm Pro özellikleri', 'Çok şube desteği', 'Sınırsız özelleştirme', 'Özel müşteri temsilcisi', 'Kurulum & onboarding'] : []),
-                ].map((f, i) => (
+                {p.dahilOlanlar.map((f, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 13.5 }}>
                     <Check size={15} style={{ color: p.renk === 'var(--gold)' ? 'var(--gold)' : p.renk, flexShrink: 0 }} />
                     <span style={{ color: 'var(--text2)' }}>{f}</span>
@@ -230,7 +163,7 @@ export default function Fiyatlar() {
                 style={{ width: '100%', padding: '13px 20px', borderRadius: 12, border: p.popular ? 'none' : '1.5px solid var(--border)', background: p.popular ? 'linear-gradient(135deg,#9A7A45,#C9A96E)' : 'transparent', color: p.popular ? '#0c0c0d' : 'var(--text)', fontFamily: 'inherit', fontSize: 14, fontWeight: 600, cursor: 'pointer', letterSpacing: '.04em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'all .2s' }}
                 onMouseOver={(e) => { if (!p.popular) (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(201,169,110,.5)' }}
                 onMouseOut={(e) => { if (!p.popular) (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border)' }}>
-                {p.id === 'enterprise' ? 'Teklif Al' : 'Hemen Başla'} <ArrowRight size={14} />
+                Hemen Başla <ArrowRight size={14} />
               </button>
             </div>
           )
@@ -246,43 +179,45 @@ export default function Fiyatlar() {
           <p style={{ fontSize: 14, color: 'var(--muted)' }}>Paketlerin detaylı özellik karşılaştırması</p>
         </div>
 
-        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 20, overflow: 'hidden' }}>
-          {/* Başlık satırı */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr repeat(3, 140px)', borderBottom: '2px solid var(--border)', background: 'var(--surface2)' }}>
-            <div style={{ padding: '18px 24px', fontSize: 13, color: 'var(--muted)' }}>Özellik</div>
-            {PAKETLER.map((p) => (
-              <div key={p.id} style={{ padding: '18px 12px', textAlign: 'center', borderLeft: '1px solid var(--border)', background: p.popular ? 'rgba(201,169,110,.06)' : 'transparent' }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: p.renk === 'var(--gold)' ? 'var(--gold-text)' : p.renk }}>{p.ad}</div>
-                <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 2 }}>{(yillik ? p.fiyat_yillik : p.fiyat_aylik).toLocaleString('tr-TR')} ₺/ay</div>
-              </div>
-            ))}
-          </div>
-
-          {GRUPLAR.map((grp, gi) => (
-            <div key={gi}>
-              {/* Grup başlığı */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr repeat(3, 140px)', background: 'var(--surface3)', borderTop: gi > 0 ? '1px solid var(--border)' : 'none' }}>
-                <div style={{ padding: '12px 24px', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--gold)', display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <Minus size={14} style={{ opacity: .5 }} /> {grp.baslik}
-                </div>
-                {PAKETLER.map((p) => <div key={p.id} style={{ borderLeft: '1px solid var(--border)', background: p.popular ? 'rgba(201,169,110,.04)' : 'transparent' }} />)}
-              </div>
-
-              {/* Satırlar */}
-              {grp.ozellikler.map((oz, oi) => (
-                <div key={oi} style={{ display: 'grid', gridTemplateColumns: '1fr repeat(3, 140px)', borderTop: '1px solid var(--border)', transition: 'background .15s' }}
-                  onMouseOver={(e) => (e.currentTarget as HTMLDivElement).style.background = 'var(--surface2)'}
-                  onMouseOut={(e) => (e.currentTarget as HTMLDivElement).style.background = 'transparent'}>
-                  <div style={{ padding: '14px 24px', fontSize: 13.5, color: 'var(--text2)' }}>{oz.ad}</div>
-                  {PAKETLER.map((p, pi) => (
-                    <div key={pi} style={{ padding: '14px 12px', borderLeft: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: p.popular ? 'rgba(201,169,110,.03)' : 'transparent' }}>
-                      <Hucre val={oz[p.id as keyof typeof oz] as boolean | string} renk={p.renk === 'var(--gold)' ? '#C9A96E' : p.renk} />
-                    </div>
-                  ))}
+        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 20, overflow: 'auto' }}>
+          <div style={{ minWidth: 280 + PAKETLER.length * 140 }}>
+            {/* Başlık satırı */}
+            <div style={{ display: 'grid', gridTemplateColumns: `1fr repeat(${PAKETLER.length}, 140px)`, borderBottom: '2px solid var(--border)', background: 'var(--surface2)' }}>
+              <div style={{ padding: '18px 24px', fontSize: 13, color: 'var(--muted)' }}>Özellik</div>
+              {PAKETLER.map((p) => (
+                <div key={p.id} style={{ padding: '18px 12px', textAlign: 'center', borderLeft: '1px solid var(--border)', background: p.popular ? 'rgba(201,169,110,.06)' : 'transparent' }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: p.renk === 'var(--gold)' ? 'var(--gold-text)' : p.renk }}>{p.ad}</div>
+                  <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 2 }}>{tl(p.fiyat_aylik, yillik).toLocaleString('tr-TR')} ₺/ay</div>
                 </div>
               ))}
             </div>
-          ))}
+
+            {GRUPLAR_DINAMIK.map(([grup, ozellikler], gi) => (
+              <div key={grup}>
+                {/* Grup başlığı */}
+                <div style={{ display: 'grid', gridTemplateColumns: `1fr repeat(${PAKETLER.length}, 140px)`, background: 'var(--surface3)', borderTop: gi > 0 ? '1px solid var(--border)' : 'none' }}>
+                  <div style={{ padding: '12px 24px', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--gold)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <Minus size={14} style={{ opacity: .5 }} /> {grup}
+                  </div>
+                  {PAKETLER.map((p) => <div key={p.id} style={{ borderLeft: '1px solid var(--border)', background: p.popular ? 'rgba(201,169,110,.04)' : 'transparent' }} />)}
+                </div>
+
+                {/* Satırlar */}
+                {ozellikler.map(({ key, tanim }) => (
+                  <div key={key} style={{ display: 'grid', gridTemplateColumns: `1fr repeat(${PAKETLER.length}, 140px)`, borderTop: '1px solid var(--border)', transition: 'background .15s' }}
+                    onMouseOver={(e) => (e.currentTarget as HTMLDivElement).style.background = 'var(--surface2)'}
+                    onMouseOut={(e) => (e.currentTarget as HTMLDivElement).style.background = 'transparent'}>
+                    <div style={{ padding: '14px 24px', fontSize: 13.5, color: 'var(--text2)' }}>{tanim.ad}</div>
+                    {PAKETLER.map((p) => (
+                      <div key={p.id} style={{ padding: '14px 12px', borderLeft: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: p.popular ? 'rgba(201,169,110,.03)' : 'transparent' }}>
+                        <Hucre val={erisimVar(p.id, harita?.[key] ?? tanim.min)} renk={p.renk === 'var(--gold)' ? '#C9A96E' : p.renk} />
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
